@@ -272,10 +272,28 @@ void editPersonalData(vector<Friends> &friends) {
     }
 }
 
+string userLogIn(){
+    string userinfo = "uzytkownik testowy";
+    char token = ' ';
+    system("cls");
+        cout<< "1. Logowanie " <<endl;
+        cout<< "2. Rejestracja" <<endl;
+        cout<< "9. Zamknij program" <<endl;
+
+        while (token != '1' && token != '2' && token != '9'){ token = getch();}
+        switch(token){
+        case '1':{break;}
+        case '2':{break;}
+        case '9':{exit(0);}
+        }
+        std::cin.clear();
+        return userinfo;
+}
+
 int main() {
     char token;
     vector <Friends> addressees;
-    string userNicName = "uzytkownik testowy";
+    string userNicName = userLogIn();
     loadDataFromFile(addressees);
 
     while(1) {
@@ -289,7 +307,7 @@ int main() {
         cout<< "6. Edytuj adresata" <<endl;
         cout<< "7. Zmien haslo" <<endl;
         cout<< "9. Wyloguj sie" <<endl;
-       // cout<< "9. Zakoncz program" <<endl;
+
         cout<< "Twoj wybor: ";
         cin >> token;
 
@@ -322,11 +340,11 @@ int main() {
        /* case '7': {
             changePassword(addressees);
             break;
-        }
-        case '8': {
-            logOut(addressees);
-            break;
         }*/
+        case '8': {
+            userLogIn();
+            break;
+        }
         case '9': {
             exit(0);
         }
