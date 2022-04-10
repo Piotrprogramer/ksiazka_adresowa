@@ -275,17 +275,21 @@ void editPersonalData(vector<Friends> &friends) {
 int main() {
     char token;
     vector <Friends> addressees;
+    string userNicName = "uzytkownik testowy";
     loadDataFromFile(addressees);
 
     while(1) {
         system("cls");
+        cout<< "Zalogowany uzytkownik: "<< userNicName <<endl;
         cout<< "1. Dodaj adresata" <<endl;
         cout<< "2. Wyszukaj po imieniu" <<endl;
         cout<< "3. Wyszukaj po nazwisku" <<endl;
         cout<< "4. Wyœwietl wszystkich adresatow" <<endl;
         cout<< "5. Usun adresata" <<endl;
         cout<< "6. Edytuj adresata" <<endl;
-        cout<< "9. Zakoncz program" <<endl;
+        cout<< "7. Zmien haslo" <<endl;
+        cout<< "9. Wyloguj sie" <<endl;
+       // cout<< "9. Zakoncz program" <<endl;
         cout<< "Twoj wybor: ";
         cin >> token;
 
@@ -315,6 +319,14 @@ int main() {
             editPersonalData(addressees);
             break;
         }
+       /* case '7': {
+            changePassword(addressees);
+            break;
+        }
+        case '8': {
+            logOut(addressees);
+            break;
+        }*/
         case '9': {
             exit(0);
         }
