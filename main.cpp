@@ -12,7 +12,7 @@ struct Friends {
 };
 
 struct User {
-    int id;
+    int id=0;
     string userName, password;
 };
 
@@ -165,7 +165,7 @@ void deleteContact ( vector <Friends> & friends) {
 
 void addAddressees(vector <Friends> &friends) {
     string name, lastName;
-    cout << "Podaj imie: ";
+    cout << "\nPodaj imie: ";
     cin >> name ;
     cout << "Podaj nazwisko: ";
     cin >> lastName;
@@ -298,7 +298,7 @@ void editPersonalData(vector<Friends> &friends) {
             cout<< "5. Edytuj adres. " <<endl;
             cout<< "9. Zakoncz edytowanie. " <<endl;
 
-            cin>>token;
+            token = getch();
             if( token=='1' ) {
                 cout<<"Podaj nowe imie: ";
                 cin >> friends[idContactToEdit].name;
@@ -332,7 +332,7 @@ void editPersonalData(vector<Friends> &friends) {
     }
 }
 
-string userLogin(vector <User> users){
+User userLogin(vector <User> users, User user){
     string userName, password;
     cout<<"Podaj nazwe uzytkownika: ";
     cin >> userName;
@@ -340,29 +340,29 @@ string userLogin(vector <User> users){
         if(userName == users[i].userName ) {
             cout<<"Podaj haslo: ";
             cin >>password;
-            if (password == users[i].password )  return userName;
+            if (password == users[i].password ) return users[i];
             else {for(int j=0; j<2; j++){
                 cout << "Podales nieprawidlowe haslo, zostalo prob "<<2-j<<"\nSprobuj ponownie: ";
                 cin >>password;
-                if (password == users[i].password )  return userName;
+                if (password == users[i].password )  return users[i];
                 }
                 cout<< "Niprawidlowe haslo, logowanie nie powiodlo sie";
                 Sleep(3000);
-                return "";
+                return user;
             }
         }
     }
     cout<< "Podany uzytkownik nie istnieje";
     Sleep(3000);
-    return "";
+    return user;
 }
 
-string userLogInMenu(){
-    string userinfo = "";
+User userLogInMenu(){
+    User user;
     vector <User> users;
     loadUserFromFile(users, "uzytkownicy.txt");
     char token;
-    while(userinfo == ""){
+    while(user.id == 0){
         system("cls");
         cout<< "1. Logowanie " <<endl;
         cout<< "2. Rejestracja" <<endl;
@@ -373,7 +373,7 @@ string userLogInMenu(){
             }
         switch(token){
         case '1':{
-            userinfo = userLogin(users);
+            user = userLogin(users, user);
             break;
             }
         case '2':{
@@ -383,18 +383,19 @@ string userLogInMenu(){
         case '9':{exit(0);}
         }
         }
-        return userinfo;
+        return user;
 }
 
 int main() {
     char token;
     vector <Friends> addressees;
-    string userNicName = userLogInMenu();
+    User user; //= userLogInMenu();
+    user.userName = "test";
     loadDataFromFile(addressees, "ksiazka.txt");
 
     while(1) {
         system("cls");
-        cout<< "Zalogowany uzytkownik: "<< userNicName <<endl;
+        cout<< "Zalogowany uzytkownik: "<< user.userName <<endl;
         cout<< "1. Dodaj adresata" <<endl;
         cout<< "2. Wyszukaj po imieniu" <<endl;
         cout<< "3. Wyszukaj po nazwisku" <<endl;
@@ -406,6 +407,7 @@ int main() {
 
         cout<< "Twoj wybor: ";
         token = getch();
+        cout<<token<<endl;
         switch (token) {
         case '1': {
             addAddressees(addressees);
@@ -437,7 +439,7 @@ int main() {
             break;
         }*/
         case '9': {
-            userLogInMenu();
+            user = userLogInMenu();
             break;
         }
         }
