@@ -65,6 +65,19 @@ void saveToFile( Friends newContact) {
     Sleep(1500);
 }
 
+void saveUsersToFile( User newContact) {
+    std::ofstream file;
+    file.open("uzytkownicy.txt", ios::out | ios::app);
+    if( file.good() == true ) {
+        file<<newContact.id<<"|";
+        file<<newContact.userName<<"|";
+        file<<newContact.password<<"|"<<endl;
+        file.close();
+        cout << "Uzytkownika dodano poprawnie";
+    } else std::cout << "Dostep do fileu zostal zabroniony!" << std::endl;
+    Sleep(1500);
+}
+
 void saveAllContact( vector <Friends> contacts) {
     std::ofstream file;
     file.open("ksiazka.txt", ios::out);
@@ -186,6 +199,31 @@ void addAddressees(vector <Friends> &friends) {
     saveToFile(newContact);
 }
 
+void addUser(vector <User> &users) {
+    string userName, password;
+    User newUser;
+    cout << "Nazwe uzytkownika: ";
+    cin >> userName ;
+
+
+    for(int i=0; i<users.size(); ) {
+        if(userName == users[i].userName) {
+            cout << "Taki uzytkownik juz istnieje "<<endl;
+            cout << "Podaj inna nazwe uzytkownika: "<<endl;
+            cin >> userName;
+            i = 0;
+        } else i++;
+    }
+    cout <<"Podaj haslo: ";
+    cin >> password;
+    newUser.userName = userName;
+    newUser.password = password;
+    if (users.empty()) newUser.id = 1;
+    else newUser.id = users[users.size()-1].id+1;
+    users.push_back(newUser);
+    saveUsersToFile(newUser);
+}
+
 void displayPerson(Friends personInfo) {
     cout<<endl<<"ID :" <<personInfo.id<<endl;
     cout<< "Imie: " << personInfo.name <<endl;
@@ -239,7 +277,6 @@ void findFriendByLastname(vector <Friends> friends) {
     if(znaleziono==false) cout <<"Osoba o nazwisku '"<<lastName<<"' nie znajduje sie w ksiazce telefonicznej."<<endl;
     system("pause");
 }
-
 
 void editPersonalData(vector<Friends> &friends) {
     int idContactToEdit;
@@ -295,10 +332,8 @@ void editPersonalData(vector<Friends> &friends) {
     }
 }
 
-string userLogin(){
+string userLogin(vector <User> users){
     string userName, password;
-    vector <User> users;
-    loadUserFromFile(users, "uzytkownicy.txt");
     cout<<"Podaj nazwe uzytkownika: ";
     cin >> userName;
         for(int i=0; i<users.size(); i++) {
@@ -324,27 +359,29 @@ string userLogin(){
 
 string userLogInMenu(){
     string userinfo = "";
+    vector <User> users;
+    loadUserFromFile(users, "uzytkownicy.txt");
     char token;
     while(userinfo == ""){
         system("cls");
         cout<< "1. Logowanie " <<endl;
         cout<< "2. Rejestracja" <<endl;
         cout<< "9. Zamknij program" <<endl<<endl;
-
         token = ' ';
         while (token != '1' && token != '2' && token != '9'){
             token = getch();
             }
         switch(token){
         case '1':{
-            userinfo = userLogin();
+            userinfo = userLogin(users);
             break;
             }
-        case '2':{break;}
+        case '2':{
+            addUser(users);
+            break;
+            }
         case '9':{exit(0);}
         }
-
-        //std::cin.clear();
         }
         return userinfo;
 }
@@ -368,7 +405,6 @@ int main() {
         cout<< "9. Wyloguj sie" <<endl;
 
         cout<< "Twoj wybor: ";
-        //cin >> token;
         token = getch();
         switch (token) {
         case '1': {
