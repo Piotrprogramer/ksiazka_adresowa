@@ -65,7 +65,7 @@ void saveToFile( Friends newContact) {
     Sleep(1500);
 }
 
-void saveUsersToFile( User newContact) {
+void addUsersToFile( User newContact) {
     std::ofstream file;
     file.open("uzytkownicy.txt", ios::out | ios::app);
     if( file.good() == true ) {
@@ -74,6 +74,20 @@ void saveUsersToFile( User newContact) {
         file<<newContact.password<<"|"<<endl;
         file.close();
         cout << "Uzytkownika dodano poprawnie";
+    } else std::cout << "Dostep do fileu zostal zabroniony!" << std::endl;
+    Sleep(1500);
+}
+
+void saveAllUsersToFile(vector<User> allUsers) {
+    std::ofstream file;
+    file.open("uzytkownicy.txt", ios::out );
+    if( file.good() == true ) {
+        for(int i=0; i<allUsers.size(); i++){
+        file<<allUsers[i].id<<"|";
+        file<<allUsers[i].userName<<"|";
+        file<<allUsers[i].password<<"|"<<endl;
+        }
+    file.close();
     } else std::cout << "Dostep do fileu zostal zabroniony!" << std::endl;
     Sleep(1500);
 }
@@ -221,7 +235,7 @@ void addUser(vector <User> &users) {
     if (users.empty()) newUser.id = 1;
     else newUser.id = users[users.size()-1].id+1;
     users.push_back(newUser);
-    saveUsersToFile(newUser);
+    addUsersToFile(newUser);
 }
 
 void displayPerson(Friends personInfo) {
@@ -386,6 +400,34 @@ User userLogInMenu(){
         return user;
 }
 
+void changePassword(User &user){
+    vector <User> users;
+    loadUserFromFile(users, "uzytkownicy.txt");
+    string password;
+    cout<< "Podaj stare haslo: ";
+    cin >> password;
+    for(int i=0; i<2; i++){
+    if (password == user.password) {
+        cout<<"Podaj nowe haslo: ";
+        cin >> password;
+        user.password = password;
+        for(int j=0; j<users.size(); j++){
+            if(users[i].userName == user.userName){
+            users[i].password = password;
+            break;
+            }
+        }
+        saveAllUsersToFile(users);
+        break;
+        }
+    else{
+        cout<<"Haslo niepoprawne, zostalo prob: "<<2-i<<endl;
+        cout<<"Podaj stare haslo: ";
+        cin>>password;
+        }
+    }
+}
+
 int main() {
     char token;
     vector <Friends> addressees;
@@ -395,7 +437,7 @@ int main() {
 
     while(1) {
         system("cls");
-        cout<< "Zalogowany uzytkownik: "<< user.userName <<endl;
+        cout<< "Zalogowany uzytkownik: "<< user.userName <<"  haslo: "<<user.password<<endl;
         cout<< "1. Dodaj adresata" <<endl;
         cout<< "2. Wyszukaj po imieniu" <<endl;
         cout<< "3. Wyszukaj po nazwisku" <<endl;
@@ -434,10 +476,10 @@ int main() {
             editPersonalData(addressees);
             break;
         }
-       /* case '7': {
-            changePassword(addressees);
+        case '7': {
+            changePassword(user);
             break;
-        }*/
+        }
         case '9': {
             user = userLogInMenu();
             break;
