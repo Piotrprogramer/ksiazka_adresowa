@@ -7,7 +7,7 @@
 using namespace std;
 
 struct Friends {
-    int id;
+    int id, userID;
     string name, lastName, phoneNumber, email, adres;
 };
 
@@ -54,6 +54,7 @@ void saveToFile( Friends newContact) {
     file.open("ksiazka.txt", ios::out | ios::app);
     if( file.good() == true ) {
         file<<newContact.id<<"|";
+        file<<newContact.userID<<"|";
         file<<newContact.name<<"|";
         file<<newContact.lastName<<"|";
         file<<newContact.phoneNumber<<"|";
@@ -111,7 +112,7 @@ void saveAllContact( vector <Friends> contacts) {
     }
 }
 
-void loadDataFromFile( vector<Friends> &friends, string savedFile) {
+void loadDataFromFile( vector<Friends> &friends, int userId, string savedFile) {
     fstream file;
     file.open(savedFile, ios::in );
     if(file.good() == true) {
@@ -120,12 +121,13 @@ void loadDataFromFile( vector<Friends> &friends, string savedFile) {
             int infoStart = 0;
             Friends newContact;
             newContact.id = changeToInt(unpacContact(line, infoStart));
+            newContact.userID = changeToInt(unpacContact(line, infoStart));
             newContact.name = unpacContact(line,infoStart);
             newContact.lastName = unpacContact(line,infoStart);
             newContact.phoneNumber = unpacContact(line,infoStart);
             newContact.email = unpacContact(line,infoStart);
             newContact.adres = unpacContact(line,infoStart);
-            friends.push_back(newContact);
+            if (userId == newContact.userID) friends.push_back(newContact);
         }
         file.close();
     }
@@ -177,7 +179,23 @@ void deleteContact ( vector <Friends> & friends) {
     std::cin.clear();
 }
 
-void addAddressees(vector <Friends> &friends) {
+int createUserId(string savedFile){
+int newID=1;
+string test;
+    fstream file;
+    file.open(savedFile, ios::in );
+    if(file.good() == true) {
+        string line;
+        while( getline(file, line)){
+            int infoStart = 0;
+            if (line.length()>0)newID = changeToInt(unpacContact(line, infoStart))+1;
+        }
+        file.close();
+    }
+    return newID;
+}
+
+void addAddressees(vector <Friends> &friends, int userID) {
     string name, lastName;
     cout << "\nPodaj imie: ";
     cin >> name ;
@@ -207,8 +225,8 @@ void addAddressees(vector <Friends> &friends) {
     getline(cin, newContact.adres );
     newContact.name = name;
     newContact.lastName = lastName;
-    if (friends.empty()) newContact.id = 1;
-    else newContact.id = friends[friends.size()-1].id+1;
+    newContact.id = createUserId("ksiazka.txt");
+    newContact.userID = userID;
     friends.push_back(newContact);
     saveToFile(newContact);
 }
@@ -430,10 +448,9 @@ void changePassword(User &user){
 
 int main() {
     char token;
+    User user = userLogInMenu();
     vector <Friends> addressees;
-    User user; //= userLogInMenu();
-    user.userName = "test";
-    loadDataFromFile(addressees, "ksiazka.txt");
+    loadDataFromFile(addressees,user.id, "ksiazka.txt");
 
     while(1) {
         system("cls");
@@ -452,7 +469,7 @@ int main() {
         cout<<token<<endl;
         switch (token) {
         case '1': {
-            addAddressees(addressees);
+            addAddressees(addressees, user.id);
             break;
         }
         case '2': {
@@ -482,6 +499,8 @@ int main() {
         }
         case '9': {
             user = userLogInMenu();
+            addressees.clear();
+            loadDataFromFile(addressees,user.id, "ksiazka.txt");
             break;
         }
         }
