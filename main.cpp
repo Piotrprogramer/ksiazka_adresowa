@@ -3,6 +3,7 @@
 #include <fstream>
 #include <vector>
 #include <conio.h>
+#include <cstdio>
 
 using namespace std;
 
@@ -126,6 +127,8 @@ void saveAllContact( vector <Friends> contacts) {
             else if ( newContact.userID != contacts[0].userID) rewriteOryginalContact(line,"ksiazka_temporary.txt");
         }
         file.close();
+        remove("ksiazka.txt");
+        rename("ksiazka_temporary.txt", "ksiazka.txt");
     }
 }
 
