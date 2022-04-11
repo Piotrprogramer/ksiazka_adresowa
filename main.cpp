@@ -49,23 +49,6 @@ string unpacContact(string personInfo, int &startPoint) {
     return info;
 }
 
-void saveToFile( Friends newContact) {
-    std::ofstream file;
-    file.open("ksiazka.txt", ios::out | ios::app);
-    if( file.good() == true ) {
-        file<<newContact.id<<"|";
-        file<<newContact.userID<<"|";
-        file<<newContact.name<<"|";
-        file<<newContact.lastName<<"|";
-        file<<newContact.phoneNumber<<"|";
-        file<<newContact.email<<"|";
-        file<<newContact.adres<<"|"<<endl;
-        file.close();
-        cout << "Osobe dodano poprawnie";
-    } else std::cout << "Dostep do fileu zostal zabroniony!" << std::endl;
-    Sleep(1500);
-}
-
 void addUsersToFile( User newContact) {
     std::ofstream file;
     file.open("uzytkownicy.txt", ios::out | ios::app);
@@ -93,24 +76,63 @@ void saveAllUsersToFile(vector<User> allUsers) {
     Sleep(1500);
 }
 
-void saveAllContact( vector <Friends> contacts) {
+void addContactToFile( Friends newContact, string fileName) {
     std::ofstream file;
-    file.open("ksiazka.txt", ios::out);
+    file.open(fileName, ios::out | ios::app);
     if( file.good() == true ) {
-        for(int i=0; i<contacts.size(); i++) {
-            file<<contacts[i].id<<"|";
-            file<<contacts[i].name<<"|";
-            file<<contacts[i].lastName<<"|";
-            file<<contacts[i].phoneNumber<<"|";
-            file<<contacts[i].email<<"|";
-            file<<contacts[i].adres<<"|"<<endl;
-        }
+        file<<newContact.id<<"|";
+        file<<newContact.userID<<"|";
+        file<<newContact.name<<"|";
+        file<<newContact.lastName<<"|";
+        file<<newContact.phoneNumber<<"|";
+        file<<newContact.email<<"|";
+        file<<newContact.adres<<"|"<<endl;
         file.close();
     } else {
-        std::cout << "Nie udalo sie wprowadzic zmian" << std::endl;
-        Sleep(2000);
+        std::cout << "Dostep do pliku zostal zabroniony!" << std::endl;
+        Sleep(1500);
     }
 }
+
+void rewriteOryginalContact(string line, string fileName){
+    std::ofstream file;
+    file.open(fileName, ios::out | ios::app);
+    if( file.good() == true ) {
+        file<<line<<endl;
+        file.close();
+    }
+}
+
+void saveAllContact( vector <Friends> contacts) {
+    fstream file;
+    int contactNumber = 0;
+    file.open("ksiazka.txt", ios::in);
+    if( file.good() == true ) {
+        string line;
+        while( getline(file, line)) {
+            int infoStart = 0;
+            Friends newContact;
+            newContact.id = changeToInt(unpacContact(line, infoStart));
+            newContact.userID = changeToInt(unpacContact(line, infoStart));
+            newContact.name = unpacContact(line,infoStart);
+            newContact.lastName = unpacContact(line,infoStart);
+            newContact.phoneNumber = unpacContact(line,infoStart);
+            newContact.email = unpacContact(line,infoStart);
+            newContact.adres = unpacContact(line,infoStart);
+            if (newContact.userID == contacts[contactNumber].userID && newContact.id >= contacts[contactNumber].id) {
+                addContactToFile(contacts[contactNumber], "ksiazka_temporary.txt");
+                contactNumber++;
+            }
+            else if ( newContact.userID != contacts[0].userID) rewriteOryginalContact(line,"ksiazka_temporary.txt");
+        }
+        file.close();
+    }
+}
+
+
+
+
+
 
 void loadDataFromFile( vector<Friends> &friends, int userId, string savedFile) {
     fstream file;
@@ -228,7 +250,7 @@ void addAddressees(vector <Friends> &friends, int userID) {
     newContact.id = createUserId("ksiazka.txt");
     newContact.userID = userID;
     friends.push_back(newContact);
-    saveToFile(newContact);
+    addContactToFile(newContact, "ksiazka.txt");
 }
 
 void addUser(vector <User> &users) {
