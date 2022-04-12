@@ -105,6 +105,12 @@ void rewriteOryginalContact(string line, string fileName){
 }
 
 void saveAllContact( vector <Friends> contacts) {
+    if(contacts.empty()){
+        ofstream plik;
+        plik.open("ksiazka.txt");
+        plik.close();
+    }
+    else{
     fstream file;
     int contactNumber = 0;
     file.open("ksiazka.txt", ios::in);
@@ -130,12 +136,8 @@ void saveAllContact( vector <Friends> contacts) {
         remove("ksiazka.txt");
         rename("ksiazka_temporary.txt", "ksiazka.txt");
     }
+    }
 }
-
-
-
-
-
 
 void loadDataFromFile( vector<Friends> &friends, int userId, string savedFile) {
     fstream file;
