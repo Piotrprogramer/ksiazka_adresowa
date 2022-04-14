@@ -458,7 +458,6 @@ void changePassword(User &user){
         for(int j=0; j<users.size(); j++){
         if(users[j].userName == user.userName){
         users[j].password = password;
-        cout<<users[i].password <<endl;system("pause");
         break;
         }
         }
