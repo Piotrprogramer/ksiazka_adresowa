@@ -73,8 +73,7 @@ void saveAllUsersToFile(vector<User> allUsers) {
         file<<allUsers[i].password<<"|"<<endl;
         }
     file.close();
-    } else std::cout << "Dostep do fileu zostal zabroniony!" << std::endl;
-    Sleep(1500);
+    }
 }
 
 void addContactToFile( Friends newContact, string fileName) {
@@ -457,10 +456,11 @@ void changePassword(User &user){
         cin >> password;
         user.password = password;
         for(int j=0; j<users.size(); j++){
-            if(users[i].userName == user.userName){
-            users[i].password = password;
-            break;
-            }
+        if(users[j].userName == user.userName){
+        users[j].password = password;
+        cout<<users[i].password <<endl;system("pause");
+        break;
+        }
         }
         saveAllUsersToFile(users);
         break;
@@ -469,6 +469,20 @@ void changePassword(User &user){
         cout<<"Haslo niepoprawne, zostalo prob: "<<2-i<<endl;
         cout<<"Podaj stare haslo: ";
         cin>>password;
+            if (password == user.password) {
+            cout<<"Podaj nowe haslo: ";
+            cin >> password;
+            user.password = password;
+            for(int j=0; j<users.size(); j++){
+            if(users[j].userName == user.userName){
+            users[j].password = password;
+            cout<<users[i].password <<endl;system("pause");
+            break;
+            }
+            }
+        saveAllUsersToFile(users);
+        break;
+        }
         }
     }
 }
