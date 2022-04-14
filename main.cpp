@@ -67,12 +67,12 @@ void saveAllUsersToFile(vector<User> allUsers) {
     std::ofstream file;
     file.open("uzytkownicy.txt", ios::out );
     if( file.good() == true ) {
-        for(int i=0; i<allUsers.size(); i++){
-        file<<allUsers[i].id<<"|";
-        file<<allUsers[i].userName<<"|";
-        file<<allUsers[i].password<<"|"<<endl;
+        for(int i=0; i<allUsers.size(); i++) {
+            file<<allUsers[i].id<<"|";
+            file<<allUsers[i].userName<<"|";
+            file<<allUsers[i].password<<"|"<<endl;
         }
-    file.close();
+        file.close();
     }
 }
 
@@ -94,7 +94,7 @@ void addContactToFile( Friends newContact, string fileName) {
     }
 }
 
-void rewriteOryginalContact(string line, string fileName){
+void rewriteOryginalContact(string line, string fileName) {
     std::ofstream file;
     file.open(fileName, ios::out | ios::app);
     if( file.good() == true ) {
@@ -109,22 +109,22 @@ void saveAllContact( vector <Friends> contacts, int userID) {
     file.open("ksiazka.txt", ios::in);
     if( file.good() == true ) {
         string line;
-        while( getline(file, line)){
-                int infoStart = 0;
-                Friends newContact;
-                newContact.id = changeToInt(unpacContact(line, infoStart));
-                newContact.userID = changeToInt(unpacContact(line, infoStart));
-                newContact.name = unpacContact(line,infoStart);
-                newContact.lastName = unpacContact(line,infoStart);
-                newContact.phoneNumber = unpacContact(line,infoStart);
-                newContact.email = unpacContact(line,infoStart);
-                newContact.adres = unpacContact(line,infoStart);
-                if(contacts.empty()){
-                    if(newContact.userID != userID) rewriteOryginalContact(line,"ksiazka_temporary.txt");
-                } else if (newContact.userID == contacts[contactNumber].userID && newContact.id >= contacts[contactNumber].id) {
-                    addContactToFile(contacts[contactNumber], "ksiazka_temporary.txt");
-                    contactNumber++;
-                } else if ( newContact.userID != contacts[0].userID) rewriteOryginalContact(line,"ksiazka_temporary.txt");
+        while( getline(file, line)) {
+            int infoStart = 0;
+            Friends newContact;
+            newContact.id = changeToInt(unpacContact(line, infoStart));
+            newContact.userID = changeToInt(unpacContact(line, infoStart));
+            newContact.name = unpacContact(line,infoStart);
+            newContact.lastName = unpacContact(line,infoStart);
+            newContact.phoneNumber = unpacContact(line,infoStart);
+            newContact.email = unpacContact(line,infoStart);
+            newContact.adres = unpacContact(line,infoStart);
+            if(contacts.empty()) {
+                if(newContact.userID != userID) rewriteOryginalContact(line,"ksiazka_temporary.txt");
+            } else if (newContact.userID == contacts[contactNumber].userID && newContact.id >= contacts[contactNumber].id) {
+                addContactToFile(contacts[contactNumber], "ksiazka_temporary.txt");
+                contactNumber++;
+            } else if ( newContact.userID != contacts[0].userID) rewriteOryginalContact(line,"ksiazka_temporary.txt");
 
         }
         file.close();
@@ -200,14 +200,14 @@ void deleteContact ( vector <Friends> & friends, int userID) {
     std::cin.clear();
 }
 
-int createUserId(string savedFile){
-int newID=1;
-string test;
+int createUserId(string savedFile) {
+    int newID=1;
+    string test;
     fstream file;
     file.open(savedFile, ios::in );
     if(file.good() == true) {
         string line;
-        while( getline(file, line)){
+        while( getline(file, line)) {
             int infoStart = 0;
             if (line.length()>0)newID = changeToInt(unpacContact(line, infoStart))+1;
         }
@@ -223,7 +223,6 @@ void addAddressees(vector <Friends> &friends, int userID) {
     cout << "Podaj nazwisko: ";
     cin >> lastName;
     Friends newContact;
-
     for(int i=0; i<friends.size(); i++) {
         if(name == friends[i].name && lastName == friends[i].lastName) {
             cout << "Taka osoba jest juz zapisana. "<<endl;
@@ -236,7 +235,6 @@ void addAddressees(vector <Friends> &friends, int userID) {
     }
     newContact.name = name;
     newContact.lastName = lastName;
-
     cout << "Podaj nr telefonu: ";
     cin >>  newContact.phoneNumber;
     cout << "Podaj email: ";
@@ -257,8 +255,6 @@ void addUser(vector <User> &users) {
     User newUser;
     cout << "Nazwe uzytkownika: ";
     cin >> userName ;
-
-
     for(int i=0; i<users.size(); ) {
         if(userName == users[i].userName) {
             cout << "Taki uzytkownik juz istnieje "<<endl;
@@ -301,10 +297,8 @@ void displayAllFriend(vector<Friends> friends) {
 void findFriendByName(vector <Friends> friends) {
     string name = "";
     bool znaleziono = false;
-
     cout<<endl<<"Podaj imie: ";
     cin >> name;
-
     for(int i=0; i<friends.size(); i++) {
         if(friends[i].name == name) {
             displayPerson(friends[i]);
@@ -320,7 +314,6 @@ void findFriendByLastname(vector <Friends> friends) {
     bool znaleziono = false;
     cout<<endl<<"Podaj nazwisko: ";
     cin >> lastName;
-
     for(int i=0; i<friends.size(); i++) {
         if(friends[i].lastName == lastName) {
             displayPerson(friends[i]);
@@ -340,7 +333,7 @@ void editPersonalData(vector<Friends> &friends, int userID) {
     if (isIDcorrect) {
 
         char token;
-        while(token != '9'){
+        while(token != '9') {
             system("cls");
             displayPerson(friends[idContactToEdit]);
             cout<<"\n";
@@ -350,11 +343,10 @@ void editPersonalData(vector<Friends> &friends, int userID) {
             cout<< "4. Edytuj email. " << endl;
             cout<< "5. Edytuj adres. " <<endl;
             cout<< "9. Zakoncz edytowanie. " <<endl;
-
-            while (token != '1' && token != '2' && token != '3' && token != '4' && token != '5' && token != '9'){
-            token = getch();
+            while (token != '1' && token != '2' && token != '3' && token != '4' && token != '5' && token != '9') {
+                token = getch();
             }
-            switch(token){
+            switch(token) {
             case '1': {
                 cout<<"Podaj nowe imie: ";
                 cin >> friends[idContactToEdit].name;
@@ -370,48 +362,49 @@ void editPersonalData(vector<Friends> &friends, int userID) {
                 break;
             }
             case'3': {
-                cout<<"Podaj nowy nr telefonu: ";
+                    cout<<"Podaj nowy nr telefonu: ";
                 cin>>friends[idContactToEdit].phoneNumber;
                 saveAllContact(friends,userID);
                 token = '0';
                 break;
             }
-            case'4': {
+        case'4': {
                 cout<<"Podaj nowy email: ";
-                cin>>friends[idContactToEdit].email;
-                saveAllContact(friends,userID);
-                token = '0';
-                break;
-            }
-            case '5': {
-                cout<<"Podaj nowy adres: ";
-                cin.sync();
-                getline(cin, friends[idContactToEdit].adres);
-                saveAllContact(friends,userID);
-                token = '0';
-                break;
-            }
-            }
+            cin>>friends[idContactToEdit].email;
+            saveAllContact(friends,userID);
+            token = '0';
+            break;
         }
-    } else {
-        cout << "Osoba o podanym ID nie istnieje.";
-        Sleep(1500);
+    case '5': {
+            cout<<"Podaj nowy adres: ";
+            cin.sync();
+            getline(cin, friends[idContactToEdit].adres);
+            saveAllContact(friends,userID);
+            token = '0';
+            break;
+        }
     }
 }
+} else {
+    cout << "Osoba o podanym ID nie istnieje.";
+    Sleep(1500);
+}
+}
 
-User userLogin(vector <User> users, User user){
+User userLogin(vector <User> users, User user) {
     string userName, password;
     cout<<"Podaj nazwe uzytkownika: ";
     cin >> userName;
-        for(int i=0; i<users.size(); i++) {
+    for(int i=0; i<users.size(); i++) {
         if(userName == users[i].userName ) {
             cout<<"Podaj haslo: ";
             cin >>password;
             if (password == users[i].password ) return users[i];
-            else {for(int j=0; j<2; j++){
-                cout << "Podales nieprawidlowe haslo, zostalo prob "<<2-j<<"\nSprobuj ponownie: ";
-                cin >>password;
-                if (password == users[i].password )  return users[i];
+            else {
+                for(int j=0; j<2; j++) {
+                    cout << "Podales nieprawidlowe haslo, zostalo prob "<<2-j<<"\nSprobuj ponownie: ";
+                    cin >>password;
+                    if (password == users[i].password )  return users[i];
                 }
                 cout<< "Niprawidlowe haslo, logowanie nie powiodlo sie";
                 Sleep(3000);
@@ -424,73 +417,75 @@ User userLogin(vector <User> users, User user){
     return user;
 }
 
-User userLogInMenu(){
+User userLogInMenu() {
     User user;
     vector <User> users;
     loadUserFromFile(users, "uzytkownicy.txt");
     char token;
-    while(user.id == 0){
+    while(user.id == 0) {
         system("cls");
         cout<< "1. Logowanie " <<endl;
         cout<< "2. Rejestracja" <<endl;
         cout<< "9. Zamknij program" <<endl<<endl;
         token = ' ';
-        while (token != '1' && token != '2' && token != '9'){
+        while (token != '1' && token != '2' && token != '9') {
             token = getch();
-            }
-        switch(token){
-        case '1':{
-            user = userLogin(users, user);
-            break;
-            }
-        case '2':{
-            addUser(users);
-            break;
-            }
-        case '9':{exit(0);}
         }
+        switch(token) {
+        case '1': {
+                user = userLogin(users, user);
+                break;
+            }
+        case '2': {
+                addUser(users);
+                break;
+            }
+        case '9': {
+                exit(0);
+            }
         }
-        return user;
+    }
+    return user;
 }
 
-void changePassword(User &user){
+void changePassword(User &user) {
     vector <User> users;
     loadUserFromFile(users, "uzytkownicy.txt");
     string password;
     cout<< "Podaj stare haslo: ";
     cin >> password;
-    for(int i=0; i<2; i++){
-    if (password == user.password) {
-        cout<<"Podaj nowe haslo: ";
-        cin >> password;
-        user.password = password;
-        for(int j=0; j<users.size(); j++){
-        if(users[j].userName == user.userName){
-        users[j].password = password;
-        break;
-        }
-        }
-        saveAllUsersToFile(users);
-        break;
-        }
-    else{
-        cout<<"Haslo niepoprawne, zostalo prob: "<<2-i<<endl;
-        cout<<"Podaj stare haslo: ";
-        cin>>password;
-            if (password == user.password) {
+    for(int i=0; i<2; i++) {
+        if (password == user.password) {
             cout<<"Podaj nowe haslo: ";
             cin >> password;
             user.password = password;
-            for(int j=0; j<users.size(); j++){
-            if(users[j].userName == user.userName){
-            users[j].password = password;
-            cout<<users[i].password <<endl;system("pause");
+            for(int j=0; j<users.size(); j++) {
+                if(users[j].userName == user.userName) {
+                    users[j].password = password;
+                    break;
+                }
+            }
+            saveAllUsersToFile(users);
             break;
+        } else {
+            cout<<"Haslo niepoprawne, zostalo prob: "<<2-i<<endl;
+            cout<<"Podaj stare haslo: ";
+            cin>>password;
+            if (password == user.password) {
+                cout<<"Podaj nowe haslo: ";
+                cin >> password;
+                user.password = password;
+                for(int j=0; j<users.size(); j++) {
+                    if(users[j].userName == user.userName) {
+                        users[j].password = password;
+                        cout<<users[i].password <<endl;
+                        system("pause");
+                        break;
+                    }
+                }
+                saveAllUsersToFile(users);
+                break;
             }
-            }
-        saveAllUsersToFile(users);
-        break;
-        }
         }
     }
 }
@@ -512,45 +507,44 @@ int main() {
         cout<< "6. Edytuj adresata" <<endl;
         cout<< "7. Zmien haslo" <<endl;
         cout<< "9. Wyloguj sie" <<endl;
-
         cout<< "Twoj wybor: ";
         token = getch();
         cout<<token<<endl;
         switch (token) {
         case '1': {
-            addAddressees(addressees, user.id);
-            break;
-        }
+                addAddressees(addressees, user.id);
+                break;
+            }
         case '2': {
-            findFriendByName(addressees);
-            break;
-        }
+                findFriendByName(addressees);
+                break;
+            }
         case '3': {
-            findFriendByLastname(addressees);
-            break;
-        }
+                findFriendByLastname(addressees);
+                break;
+            }
         case '4': {
-            displayAllFriend(addressees);
-            break;
-        }
+                displayAllFriend(addressees);
+                break;
+            }
         case '5': {
-            deleteContact(addressees, user.id);
-            break;
-        }
+                deleteContact(addressees, user.id);
+                break;
+            }
         case '6': {
-            editPersonalData(addressees, user.id);
-            break;
-        }
+                editPersonalData(addressees, user.id);
+                break;
+            }
         case '7': {
-            changePassword(user);
-            break;
-        }
+                changePassword(user);
+                break;
+            }
         case '9': {
-            user = userLogInMenu();
-            addressees.clear();
-            loadDataFromFile(addressees,user.id, "ksiazka.txt");
-            break;
-        }
+                user = userLogInMenu();
+                addressees.clear();
+                loadDataFromFile(addressees,user.id, "ksiazka.txt");
+                break;
+            }
         }
     }
     return 0;
