@@ -103,38 +103,33 @@ void rewriteOryginalContact(string line, string fileName){
     }
 }
 
-void saveAllContact( vector <Friends> contacts) {
-    if(contacts.empty()){
-        ofstream plik;
-        plik.open("ksiazka.txt");
-        plik.close();
-    }
-    else{
+void saveAllContact( vector <Friends> contacts, int userID) {
     fstream file;
     int contactNumber = 0;
     file.open("ksiazka.txt", ios::in);
     if( file.good() == true ) {
         string line;
-        while( getline(file, line)) {
-            int infoStart = 0;
-            Friends newContact;
-            newContact.id = changeToInt(unpacContact(line, infoStart));
-            newContact.userID = changeToInt(unpacContact(line, infoStart));
-            newContact.name = unpacContact(line,infoStart);
-            newContact.lastName = unpacContact(line,infoStart);
-            newContact.phoneNumber = unpacContact(line,infoStart);
-            newContact.email = unpacContact(line,infoStart);
-            newContact.adres = unpacContact(line,infoStart);
-            if (newContact.userID == contacts[contactNumber].userID && newContact.id >= contacts[contactNumber].id) {
-                addContactToFile(contacts[contactNumber], "ksiazka_temporary.txt");
-                contactNumber++;
-            }
-            else if ( newContact.userID != contacts[0].userID) rewriteOryginalContact(line,"ksiazka_temporary.txt");
+        while( getline(file, line)){
+                int infoStart = 0;
+                Friends newContact;
+                newContact.id = changeToInt(unpacContact(line, infoStart));
+                newContact.userID = changeToInt(unpacContact(line, infoStart));
+                newContact.name = unpacContact(line,infoStart);
+                newContact.lastName = unpacContact(line,infoStart);
+                newContact.phoneNumber = unpacContact(line,infoStart);
+                newContact.email = unpacContact(line,infoStart);
+                newContact.adres = unpacContact(line,infoStart);
+                if(contacts.empty()){
+                    if(newContact.userID != userID) rewriteOryginalContact(line,"ksiazka_temporary.txt");
+                } else if (newContact.userID == contacts[contactNumber].userID && newContact.id >= contacts[contactNumber].id) {
+                    addContactToFile(contacts[contactNumber], "ksiazka_temporary.txt");
+                    contactNumber++;
+                } else if ( newContact.userID != contacts[0].userID) rewriteOryginalContact(line,"ksiazka_temporary.txt");
+
         }
         file.close();
         remove("ksiazka.txt");
         rename("ksiazka_temporary.txt", "ksiazka.txt");
-    }
     }
 }
 
@@ -176,7 +171,7 @@ void loadUserFromFile( vector <User> &users, string savedFile) {
     }
 }
 
-void deleteContact ( vector <Friends> & friends) {
+void deleteContact ( vector <Friends> & friends, int userID) {
     vector <Friends>::iterator it;
     int idContactToErase = 0;
     bool isIDcorrect = false;
@@ -191,7 +186,7 @@ void deleteContact ( vector <Friends> & friends) {
         if(choice == 't') {
             it = friends.begin() + idContactToErase;
             friends.erase (it);
-            saveAllContact(friends);
+            saveAllContact(friends, userID);
             cout<<endl<<"Adresat zostal usuniety."<<endl;
             Sleep(1500);
         } else {
@@ -336,7 +331,7 @@ void findFriendByLastname(vector <Friends> friends) {
     system("pause");
 }
 
-void editPersonalData(vector<Friends> &friends) {
+void editPersonalData(vector<Friends> &friends, int userID) {
     int idContactToEdit;
     bool isIDcorrect;
     cout<<"Podaj ID adresata: ";
@@ -363,28 +358,28 @@ void editPersonalData(vector<Friends> &friends) {
             case '1': {
                 cout<<"Podaj nowe imie: ";
                 cin >> friends[idContactToEdit].name;
-                saveAllContact(friends);
+                saveAllContact(friends,userID);
                 token = '0';
                 break;
             }
             case '2': {
                 cout<<"Podaj nowe nazwisko: ";
                 cin>>friends[idContactToEdit].lastName;
-                saveAllContact(friends);
+                saveAllContact(friends,userID);
                 token = '0';
                 break;
             }
             case'3': {
                 cout<<"Podaj nowy nr telefonu: ";
                 cin>>friends[idContactToEdit].phoneNumber;
-                saveAllContact(friends);
+                saveAllContact(friends,userID);
                 token = '0';
                 break;
             }
             case'4': {
                 cout<<"Podaj nowy email: ";
                 cin>>friends[idContactToEdit].email;
-                saveAllContact(friends);
+                saveAllContact(friends,userID);
                 token = '0';
                 break;
             }
@@ -392,7 +387,7 @@ void editPersonalData(vector<Friends> &friends) {
                 cout<<"Podaj nowy adres: ";
                 cin.sync();
                 getline(cin, friends[idContactToEdit].adres);
-                saveAllContact(friends);
+                saveAllContact(friends,userID);
                 token = '0';
                 break;
             }
@@ -539,12 +534,11 @@ int main() {
             break;
         }
         case '5': {
-
-            deleteContact(addressees);
+            deleteContact(addressees, user.id);
             break;
         }
         case '6': {
-            editPersonalData(addressees);
+            editPersonalData(addressees, user.id);
             break;
         }
         case '7': {
