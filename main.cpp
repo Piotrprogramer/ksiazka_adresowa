@@ -356,32 +356,46 @@ void editPersonalData(vector<Friends> &friends) {
             cout<< "5. Edytuj adres. " <<endl;
             cout<< "9. Zakoncz edytowanie. " <<endl;
 
+            while (token != '1' && token != '2' && token != '3' && token != '4' && token != '5' && token != '9'){
             token = getch();
-            if( token=='1' ) {
+            }
+            switch(token){
+            case '1': {
                 cout<<"Podaj nowe imie: ";
                 cin >> friends[idContactToEdit].name;
                 saveAllContact(friends);
+                token = '0';
+                break;
             }
-            else if(token == '2'){
+            case '2': {
                 cout<<"Podaj nowe nazwisko: ";
                 cin>>friends[idContactToEdit].lastName;
                 saveAllContact(friends);
+                token = '0';
+                break;
             }
-            else if(token == '3'){
+            case'3': {
                 cout<<"Podaj nowy nr telefonu: ";
                 cin>>friends[idContactToEdit].phoneNumber;
                 saveAllContact(friends);
+                token = '0';
+                break;
             }
-            else if(token == '4'){
+            case'4': {
                 cout<<"Podaj nowy email: ";
                 cin>>friends[idContactToEdit].email;
                 saveAllContact(friends);
+                token = '0';
+                break;
             }
-            else if (token == '5'){
+            case '5': {
                 cout<<"Podaj nowy adres: ";
                 cin.sync();
                 getline(cin, friends[idContactToEdit].adres);
                 saveAllContact(friends);
+                token = '0';
+                break;
+            }
             }
         }
     } else {
