@@ -22,16 +22,69 @@ int changeToInt(string z1) {
     return x;
 }
 
-bool checkId(vector<Friends> friends, int &personID) {
+bool checkId(vector<Friends> friends, int personID) {
     bool founded = false;
     for(int i=0; i< friends.size(); i++) {
         if( friends[i].id == personID ) {
-            personID = i;
             founded = true;
             break;
         }
     }
     return founded;
+}
+
+int getContactPosition(vector<Friends> friends, int personID) {
+    for(int i=0; i< friends.size(); i++) {
+        if( friends[i].id == personID ) {
+            personID = i;
+            break;
+        }
+    }
+    return personID;
+}
+
+void addUsersToFile( User newContact) {
+    std::ofstream file;
+    file.open("uzytkownicy.txt", ios::out | ios::app);
+    if( file.good() ) {
+        file<<newContact.id<<"|";
+        file<<newContact.userName<<"|";
+        file<<newContact.password<<"|"<<endl;
+        file.close();
+        cout << "Uzytkownika dodano poprawnie";
+    } else std::cout << "Dostep do fileu zostal zabroniony!" << std::endl;
+    Sleep(1500);
+}
+
+void saveAllUsersToFile(vector<User> allUsers) {
+    std::ofstream file;
+    file.open("uzytkownicy.txt", ios::out );
+    if( file.good() ) {
+        for(int i=0; i<allUsers.size(); i++) {
+            file<<allUsers[i].id<<"|";
+            file<<allUsers[i].userName<<"|";
+            file<<allUsers[i].password<<"|"<<endl;
+        }
+        file.close();
+    }
+}
+
+void addContactToFile( Friends newContact, string fileName) {
+    std::ofstream file;
+    file.open(fileName, ios::out | ios::app);
+    if( file.good() ) {
+        file<<newContact.id<<"|";
+        file<<newContact.userID<<"|";
+        file<<newContact.name<<"|";
+        file<<newContact.lastName<<"|";
+        file<<newContact.phoneNumber<<"|";
+        file<<newContact.email<<"|";
+        file<<newContact.adres<<"|"<<endl;
+        file.close();
+    } else {
+        std::cout << "Dostep do pliku zostal zabroniony!" << std::endl;
+        Sleep(1500);
+    }
 }
 
 string unpacContact(string personInfo, int &startPoint) {
@@ -50,84 +103,61 @@ string unpacContact(string personInfo, int &startPoint) {
     return info;
 }
 
-void addUsersToFile( User newContact) {
-    std::ofstream file;
-    file.open("uzytkownicy.txt", ios::out | ios::app);
-    if( file.good() == true ) {
-        file<<newContact.id<<"|";
-        file<<newContact.userName<<"|";
-        file<<newContact.password<<"|"<<endl;
-        file.close();
-        cout << "Uzytkownika dodano poprawnie";
-    } else std::cout << "Dostep do fileu zostal zabroniony!" << std::endl;
-    Sleep(1500);
-}
-
-void saveAllUsersToFile(vector<User> allUsers) {
-    std::ofstream file;
-    file.open("uzytkownicy.txt", ios::out );
-    if( file.good() == true ) {
-        for(int i=0; i<allUsers.size(); i++) {
-            file<<allUsers[i].id<<"|";
-            file<<allUsers[i].userName<<"|";
-            file<<allUsers[i].password<<"|"<<endl;
-        }
-        file.close();
-    }
-}
-
-void addContactToFile( Friends newContact, string fileName) {
-    std::ofstream file;
-    file.open(fileName, ios::out | ios::app);
-    if( file.good() == true ) {
-        file<<newContact.id<<"|";
-        file<<newContact.userID<<"|";
-        file<<newContact.name<<"|";
-        file<<newContact.lastName<<"|";
-        file<<newContact.phoneNumber<<"|";
-        file<<newContact.email<<"|";
-        file<<newContact.adres<<"|"<<endl;
-        file.close();
-    } else {
-        std::cout << "Dostep do pliku zostal zabroniony!" << std::endl;
-        Sleep(1500);
-    }
-}
-
-void rewriteOryginalContact(string line, string fileName) {
-    std::ofstream file;
-    file.open(fileName, ios::out | ios::app);
-    if( file.good() == true ) {
-        file<<line<<endl;
-        file.close();
-    }
-}
-
-void saveAllContact( vector <Friends> contacts, int userID) {
+int getFileLineToDelete(int conntactID, string fileName) {
+    int lineToRemove = 0;
+    int contactIdFromFile = 0;
+    int infoStart = 0;
     fstream file;
-    int contactNumber = 0;
-    file.open("ksiazka.txt", ios::in);
-    if( file.good() == true ) {
-        string line;
+    string line;
+    file.open(fileName, ios::in);
+    if( file.good() ) {
         while( getline(file, line)) {
-            int infoStart = 0;
-            Friends newContact;
-            newContact.id = changeToInt(unpacContact(line, infoStart));
-            newContact.userID = changeToInt(unpacContact(line, infoStart));
-            newContact.name = unpacContact(line,infoStart);
-            newContact.lastName = unpacContact(line,infoStart);
-            newContact.phoneNumber = unpacContact(line,infoStart);
-            newContact.email = unpacContact(line,infoStart);
-            newContact.adres = unpacContact(line,infoStart);
-            if(contacts.empty()) {
-                if(newContact.userID != userID) rewriteOryginalContact(line,"ksiazka_temporary.txt");
-            } else if (newContact.userID == contacts[contactNumber].userID && newContact.id >= contacts[contactNumber].id) {
-                addContactToFile(contacts[contactNumber], "ksiazka_temporary.txt");
-                contactNumber++;
-            } else if ( newContact.userID != contacts[0].userID) rewriteOryginalContact(line,"ksiazka_temporary.txt");
-
+            infoStart = 0;
+            contactIdFromFile = changeToInt(unpacContact(line, infoStart));
+            if (contactIdFromFile == conntactID) break;
+            lineToRemove++;
         }
         file.close();
+    }
+    return lineToRemove;
+}
+
+Friends getContactById(vector<Friends> friends, int contactID){
+    Friends contact;
+        for(int i=0; i< friends.size(); i++) {
+        if( friends[i].id == contactID ) {
+            contact = friends[i];
+            break;
+        }
+    }
+    return contact;
+}
+
+void saveAllContact( vector <Friends> contacts, int contactId) {
+    fstream file1,file2;
+    int lineLoaded = 0;
+
+    int deleteingLine = getFileLineToDelete(contactId, "ksiazka.txt");
+    file1.open("ksiazka.txt", ios::in);
+    if( file1.good() ) {
+        string line;
+        file2.open("ksiazka_temporary.txt", ios::out | ios::app);
+        if( file2.good() ) {
+        while( getline(file1, line)) {
+            if(deleteingLine == lineLoaded) {
+                if(checkId(contacts, contactId)){
+                Friends contact = getContactById(contacts,contactId);
+                addContactToFile(contact,"ksiazka_temporary.txt");
+                }
+            }
+            else{
+            file2<<line<<endl;
+            }
+            lineLoaded++;
+        }
+        }
+        file1.close();
+        file2.close();
         remove("ksiazka.txt");
         rename("ksiazka_temporary.txt", "ksiazka.txt");
     }
@@ -136,7 +166,7 @@ void saveAllContact( vector <Friends> contacts, int userID) {
 void loadDataFromFile( vector<Friends> &friends, int userId, string savedFile) {
     fstream file;
     file.open(savedFile, ios::in );
-    if(file.good() == true) {
+    if(file.good()) {
         string line;
         while( getline(file, line)) {
             int infoStart = 0;
@@ -157,7 +187,7 @@ void loadDataFromFile( vector<Friends> &friends, int userId, string savedFile) {
 void loadUserFromFile( vector <User> &users, string savedFile) {
     fstream file;
     file.open(savedFile, ios::in );
-    if(file.good() == true) {
+    if(file.good()) {
         string line;
         while( getline(file, line)) {
             int infoStart = 0;
@@ -173,7 +203,7 @@ void loadUserFromFile( vector <User> &users, string savedFile) {
 
 void deleteContact ( vector <Friends> & friends, int userID) {
     vector <Friends>::iterator it;
-    int idContactToErase = 0;
+    int idContactToErase =0;
     bool isIDcorrect = false;
     char choice ;
     cout<<"Podaj ID adresata: ";
@@ -184,9 +214,9 @@ void deleteContact ( vector <Friends> & friends, int userID) {
         cout<<endl<<"Aby potwierdzic usuwanie wcisnij 't'";
         choice = getch();
         if(choice == 't') {
-            it = friends.begin() + idContactToErase;
+            it = friends.begin() + getContactPosition (friends ,idContactToErase);
             friends.erase (it);
-            saveAllContact(friends, userID);
+            saveAllContact(friends, idContactToErase);
             cout<<endl<<"Adresat zostal usuniety."<<endl;
             Sleep(1500);
         } else {
@@ -205,7 +235,7 @@ int createUserId(string savedFile) {
     string test;
     fstream file;
     file.open(savedFile, ios::in );
-    if(file.good() == true) {
+    if(file.good()) {
         string line;
         while( getline(file, line)) {
             int infoStart = 0;
@@ -326,16 +356,18 @@ void findFriendByLastname(vector <Friends> friends) {
 
 void editPersonalData(vector<Friends> &friends, int userID) {
     int idContactToEdit;
+    int contactPosition;
     bool isIDcorrect;
     cout<<"Podaj ID adresata: ";
     cin>> idContactToEdit;
     isIDcorrect = checkId(friends, idContactToEdit);
     if (isIDcorrect) {
 
+        contactPosition = getContactPosition(friends,idContactToEdit);
         char token;
         while(token != '9') {
             system("cls");
-            displayPerson(friends[idContactToEdit]);
+            displayPerson(friends[contactPosition]);
             cout<<"\n";
             cout<< "1. Edytuj imie. " <<endl;
             cout<< "2. Edytuj nazwisko. " << endl;
@@ -349,37 +381,37 @@ void editPersonalData(vector<Friends> &friends, int userID) {
             switch(token) {
             case '1': {
                 cout<<"Podaj nowe imie: ";
-                cin >> friends[idContactToEdit].name;
-                saveAllContact(friends,userID);
+                cin >> friends[contactPosition].name;
+                saveAllContact(friends,idContactToEdit);
                 token = '0';
                 break;
             }
             case '2': {
                 cout<<"Podaj nowe nazwisko: ";
-                cin>>friends[idContactToEdit].lastName;
-                saveAllContact(friends,userID);
+                cin>>friends[contactPosition].lastName;
+                saveAllContact(friends,idContactToEdit);
                 token = '0';
                 break;
             }
             case'3': {
                     cout<<"Podaj nowy nr telefonu: ";
-                cin>>friends[idContactToEdit].phoneNumber;
-                saveAllContact(friends,userID);
+                cin>>friends[contactPosition].phoneNumber;
+                saveAllContact(friends,idContactToEdit);
                 token = '0';
                 break;
             }
         case'4': {
                 cout<<"Podaj nowy email: ";
-            cin>>friends[idContactToEdit].email;
-            saveAllContact(friends,userID);
+            cin>>friends[contactPosition].email;
+            saveAllContact(friends,idContactToEdit);
             token = '0';
             break;
         }
     case '5': {
             cout<<"Podaj nowy adres: ";
             cin.sync();
-            getline(cin, friends[idContactToEdit].adres);
-            saveAllContact(friends,userID);
+            getline(cin, friends[contactPosition].adres);
+            saveAllContact(friends,idContactToEdit);
             token = '0';
             break;
         }
@@ -407,7 +439,7 @@ User userLogin(vector <User> users, User user) {
                     if (password == users[i].password )  return users[i];
                 }
                 cout<< "Niprawidlowe haslo, logowanie nie powiodlo sie";
-                Sleep(3000);
+                Sleep(1500);
                 return user;
             }
         }
@@ -502,7 +534,7 @@ int main() {
         cout<< "1. Dodaj adresata" <<endl;
         cout<< "2. Wyszukaj po imieniu" <<endl;
         cout<< "3. Wyszukaj po nazwisku" <<endl;
-        cout<< "4. Wyœwietl wszystkich adresatow" <<endl;
+        cout<< "4. Wyswietl wszystkich adresatow" <<endl;
         cout<< "5. Usun adresata" <<endl;
         cout<< "6. Edytuj adresata" <<endl;
         cout<< "7. Zmien haslo" <<endl;
